@@ -180,3 +180,4 @@ database.db
 
 # VS Code settings
 .vscode/*.json
+vscode/*.json
