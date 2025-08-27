@@ -1,4 +1,5 @@
 import asyncio
+import sys
 
 from logging.config import fileConfig
 
@@ -11,10 +12,14 @@ from alembic import context
 from fast_zero.models import table_registry
 from fast_zero.settings import Settings
 
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option('sqlalchemy.url', Settings().DATABASE_URL)
+config.set_main_option(
+    'sqlalchemy.url',
+    Settings().DATABASE_URL.replace('%', '%%')  # Escapa o %
+)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -79,6 +84,10 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online():
     asyncio.run(run_async_migrations())
+
+
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 if context.is_offline_mode():
